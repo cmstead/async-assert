@@ -121,7 +121,7 @@ AsyncAssertion.prototype = {
     equals: function (...args) {
         return new Promise((resolve, reject) => {
             const assertion = (result) => assert.equal(...[result].concat(args));
-            const handleResolution = this.buildResolutionHandler(resolve, reject, assertion);
+            const handleResolution = this.transformResolver.buildResolutionHandler(resolve, reject, assertion);
             const handleError = this.buildRejectionHandler(resolve, reject, assertion)
 
             this.asyncActionResolver
