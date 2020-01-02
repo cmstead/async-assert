@@ -1,8 +1,52 @@
 const { assert } = require('chai');
 const AsyncActionResolver = require('./AsyncActionResolver');
 
+function TransformResolver(transform) {
+    this.transform = transform;
+    this.expectError = false;
+}
+
+TransformResolver.prototype = {
+    setErrorIsExpected: function() {
+        this.expectError = true;
+    },
+
+    buildResolutionHandler: function (resolve, reject, assertion) {
+        return (...results) => {
+            if (!this.expectError) {
+                const actualResult = this.transform(...results);
+
+                assertion(actualResult);
+
+                resolve(true);
+            } else {
+                reject(new Error('[RequestAssert] Expected an error, but got a success result.'));
+            }
+        }
+    },
+
+    buildRejectionHandler: function (resolve, reject, assertion) {
+        return (...results) => {
+            if (this.expectError) {
+                try {
+                    const actualResult = this.transform(...results);
+
+                    assertion(actualResult);
+
+                    resolve(true);
+                } catch (e) {
+                    reject(e);
+                }
+            } else {
+                reject(new Error('[RequestAssert] Expected a success result, but got an error.'));
+            }
+        }
+    }
+};
+
 function AsyncAssertion(asyncAction) {
     this.asyncActionResolver = new AsyncActionResolver(asyncAction);
+    this.transformResolver = null;
     this.resultTransform = null;
     this.errorTransform = null;
 }
@@ -13,15 +57,18 @@ AsyncAssertion.callAction = function(asyncAction) {
 
 AsyncAssertion.prototype = {
     throwOnDuplicateCall: function () {
-        if (this.resultTransform !== null || this.errorTransform !== null) {
+        if (this.transformResolver !== null) {
             const message = 'Functions assertResult ' +
                 'and assertError cannot be used together, ' +
                 'or called more than once.'
             throw new Error(message);
         }
     },
+
     assertResult: function (resultTransform) {
         this.throwOnDuplicateCall();
+
+        this.transformResolver = new TransformResolver(resultTransform);
 
         this.resultTransform = resultTransform;
 
@@ -29,7 +76,10 @@ AsyncAssertion.prototype = {
     },
 
     assertError: function (resultTransform) {
-        this.throwOnDuplicateCall()
+        this.throwOnDuplicateCall();
+
+        this.transformResolver = new TransformResolver(resultTransform);
+        this.transformResolver.setErrorIsExpected();
 
         this.errorTransform = resultTransform;
 
