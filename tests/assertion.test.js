@@ -64,7 +64,7 @@ describe("Assertion", function () {
 
             assert.throws(
                 () => assertion.assertResult(() => null).assertResult(),
-                'Functions assertResult and assertError cannot be used together, or called more than once.');
+                'set a transform more than once');
         });
 
         it("properly resolves callback-style async actions", function () {

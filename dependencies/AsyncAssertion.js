@@ -4,9 +4,7 @@ const TransformResolver = require('./TransformResolver');
 
 function AsyncAssertion(asyncAction) {
     this.asyncActionResolver = new AsyncActionResolver(asyncAction);
-    this.transformResolver = null;
-    this.resultTransform = null;
-    this.errorTransform = null;
+    this.transformResolver = new TransformResolver();
 }
 
 AsyncAssertion.callAction = function(asyncAction) {
@@ -24,24 +22,14 @@ AsyncAssertion.prototype = {
     },
 
     assertResult: function (resultTransform) {
-        this.throwOnDuplicateCall();
-
-        this.transformResolver = new TransformResolver(resultTransform);
         this.transformResolver.setTransform(resultTransform);
         
-        this.resultTransform = resultTransform;
-
         return this;
     },
 
     assertError: function (resultTransform) {
-        this.throwOnDuplicateCall();
-
-        this.transformResolver = new TransformResolver(resultTransform);
         this.transformResolver.setTransform(resultTransform);
         this.transformResolver.setErrorIsExpected();
-
-        this.errorTransform = resultTransform;
 
         return this;
     },

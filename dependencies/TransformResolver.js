@@ -4,11 +4,18 @@ function TransformResolver(transform) {
 }
 
 TransformResolver.prototype = {
+    throwOnTransformExists: function () {
+        if(typeof this.transform === 'function') {
+            throw new Error('Cannot set a transform more than once');
+        }
+    },
+    
     setErrorIsExpected: function() {
         this.expectError = true;
     },
 
     setTransform: function (transform) {
+        this.throwOnTransformExists();
         this.transform = transform;
     },
 
