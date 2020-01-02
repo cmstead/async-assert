@@ -12,15 +12,6 @@ AsyncAssertion.callAction = function (asyncAction) {
 }
 
 AsyncAssertion.prototype = {
-    throwOnDuplicateCall: function () {
-        if (this.transformResolver !== null) {
-            const message = 'Functions assertResult ' +
-                'and assertError cannot be used together, ' +
-                'or called more than once.'
-            throw new Error(message);
-        }
-    },
-
     assertResult: function (resultTransform) {
         this.transformResolver.setTransform(resultTransform);
 
