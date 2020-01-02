@@ -36,11 +36,12 @@ AsyncAssertion.prototype = {
         return this;
     },
 
-    buildResolutionHandler: function (resolve, reject, args) {
+    buildResolutionHandler: function (resolve, reject, assertion) {
         return (...results) => {
             if (typeof this.resultTransform === 'function') {
                 const actualResult = this.resultTransform(...results);
-                assert.equal(...[actualResult].concat(args));
+
+                assertion(actualResult);
 
                 resolve(true);
             } else {
@@ -49,13 +50,13 @@ AsyncAssertion.prototype = {
         }
     },
 
-    buildRejectionHandler: function (resolve, reject, args) {
+    buildRejectionHandler: function (resolve, reject, assertion) {
         return (...results) => {
             if (typeof this.errorTransform === 'function') {
                 try {
                     const actualResult = this.errorTransform(...results);
 
-                    assert.equal(...[actualResult].concat(args));
+                    assertion(actualResult);
 
                     resolve(true);
                 } catch (e) {
@@ -69,8 +70,9 @@ AsyncAssertion.prototype = {
 
     equals: function (...args) {
         return new Promise((resolve, reject) => {
-            const handleResolution = this.buildResolutionHandler(resolve, reject, args);
-            const handleError = this.buildRejectionHandler(resolve, reject, args)
+            const assertion = (result) => assert.equal(...[result].concat(args));
+            const handleResolution = this.buildResolutionHandler(resolve, reject, assertion);
+            const handleError = this.buildRejectionHandler(resolve, reject, assertion)
 
             this.asyncActionResolver
                 .resolve()
