@@ -7,7 +7,7 @@ function AsyncAssertion(asyncAction) {
     this.transformResolver = new TransformResolver();
 }
 
-AsyncAssertion.callAction = function(asyncAction) {
+AsyncAssertion.callAction = function (asyncAction) {
     return new AsyncAssertion(asyncAction);
 }
 
@@ -23,7 +23,7 @@ AsyncAssertion.prototype = {
 
     assertResult: function (resultTransform) {
         this.transformResolver.setTransform(resultTransform);
-        
+
         return this;
     },
 
@@ -32,11 +32,13 @@ AsyncAssertion.prototype = {
         this.transformResolver.setErrorIsExpected();
 
         return this;
-    },
+    }
+};
 
-    equals: function (...args) {
+function assertionBuilder(assertionKey) {
+    return function (...args) {
         return new Promise((resolve, reject) => {
-            const assertion = (result) => assert.equal(...[result].concat(args));
+            const assertion = (result) => assert[assertionKey](...[result].concat(args));
             const handleResolution = this.transformResolver.buildResolutionHandler(resolve, reject, assertion);
             const handleError = this.transformResolver.buildRejectionHandler(resolve, reject, assertion)
 
@@ -46,6 +48,12 @@ AsyncAssertion.prototype = {
                 .catch(handleError);
         });
     }
-};
+}
+
+Object
+    .keys(assert)
+    .forEach(function(key) {
+        AsyncAssertion.prototype[key] = assertionBuilder(key);
+    });
 
 module.exports = AsyncAssertion;

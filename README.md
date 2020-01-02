@@ -1,2 +1,2 @@
 # request-assert
-A library to simplify testing API endpoint integrations
+Test asynchronous behaviors in your tests without tearing out your hair

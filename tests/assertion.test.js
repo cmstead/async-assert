@@ -33,7 +33,7 @@ describe("Assertion", function () {
             return assertion
 
                 .assertResult(result => result.message)
-                .equals('YAY');
+                .equal('YAY');
         });
 
         it("fails when transform result doesn't match expected result", function () {
@@ -47,7 +47,7 @@ describe("Assertion", function () {
                 .callAction(asyncAction)
 
                 .assertResult(result => result.message)
-                .equals('ANOTHER YAY')
+                .equal('ANOTHER YAY')
 
                 .then(() => {
                     resolutionState = false;
@@ -76,7 +76,7 @@ describe("Assertion", function () {
                 .callAction(callbackStyleAction)
 
                 .assertResult(x => x)
-                .equals('something');
+                .equal('something');
         });
     });
 
@@ -90,7 +90,7 @@ describe("Assertion", function () {
                 .callAction(asyncAction)
 
                 .assertError(result => result.message)
-                .equals('Something broke');
+                .equal('Something broke');
         });
 
 
