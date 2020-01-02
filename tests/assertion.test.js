@@ -1,4 +1,4 @@
-const AsyncAssert = require('../dependencies/AsyncAssertion');
+const AsyncAssert = require('../index');
 const promisePuppeteer = require('promise-puppeteer');
 const { assert } = require('chai');
 
@@ -27,8 +27,11 @@ describe("Assertion", function () {
 
             delayedResolve(thenableFake, actualResult);
 
-            return AsyncAssert
-                .callAction(asyncAction)
+            const assertion = AsyncAssert
+                .callAction(asyncAction);
+
+            return assertion
+
                 .assertResult(result => result.message)
                 .equals('YAY');
         });
