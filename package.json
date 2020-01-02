@@ -1,6 +1,6 @@
 {
   "name": "async-assert",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Test asynchronous behaviors in your tests without tearing out your hair",
   "main": "index.js",
   "scripts": {
