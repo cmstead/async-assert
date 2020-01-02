@@ -86,38 +86,6 @@ AsyncAssertion.prototype = {
         return this;
     },
 
-    buildResolutionHandler: function (resolve, reject, assertion) {
-        return (...results) => {
-            if (typeof this.resultTransform === 'function') {
-                const actualResult = this.resultTransform(...results);
-
-                assertion(actualResult);
-
-                resolve(true);
-            } else {
-                reject(new Error('[RequestAssert] Expected an error, but got a success result.'));
-            }
-        }
-    },
-
-    buildRejectionHandler: function (resolve, reject, assertion) {
-        return (...results) => {
-            if (typeof this.errorTransform === 'function') {
-                try {
-                    const actualResult = this.errorTransform(...results);
-
-                    assertion(actualResult);
-
-                    resolve(true);
-                } catch (e) {
-                    reject(e);
-                }
-            } else {
-                reject(new Error('[RequestAssert] Expected a success result, but got an error.'));
-            }
-        }
-    },
-
     equals: function (...args) {
         return new Promise((resolve, reject) => {
             const assertion = (result) => assert.equal(...[result].concat(args));
