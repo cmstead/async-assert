@@ -27,7 +27,8 @@ AsyncAssertion.prototype = {
         this.throwOnDuplicateCall();
 
         this.transformResolver = new TransformResolver(resultTransform);
-
+        this.transformResolver.setTransform(resultTransform);
+        
         this.resultTransform = resultTransform;
 
         return this;
@@ -37,6 +38,7 @@ AsyncAssertion.prototype = {
         this.throwOnDuplicateCall();
 
         this.transformResolver = new TransformResolver(resultTransform);
+        this.transformResolver.setTransform(resultTransform);
         this.transformResolver.setErrorIsExpected();
 
         this.errorTransform = resultTransform;

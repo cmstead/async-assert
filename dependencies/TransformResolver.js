@@ -8,6 +8,10 @@ TransformResolver.prototype = {
         this.expectError = true;
     },
 
+    setTransform: function (transform) {
+        this.transform = transform;
+    },
+
     buildResolutionHandler: function (resolve, reject, assertion) {
         return (...results) => {
             if (!this.expectError) {
