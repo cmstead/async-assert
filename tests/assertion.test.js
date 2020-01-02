@@ -19,7 +19,7 @@ describe("Assertion", function () {
         thenableFake = promisePuppeteer.getThenableFake();
         const asyncAction = () => thenableFake;
 
-        assertion = new AsyncAssertion(asyncAction);
+        assertion = AsyncAssertion.callAction(asyncAction);
     });
 
     describe("assertResult", function () {

@@ -7,6 +7,10 @@ function AsyncAssertion(asyncAction) {
     this.errorTransform = null;
 }
 
+AsyncAssertion.callAction = function(asyncAction) {
+    return new AsyncAssertion(asyncAction);
+}
+
 AsyncAssertion.prototype = {
     throwOnDuplicateCall: function () {
         if (this.resultTransform !== null || this.errorTransform !== null) {
