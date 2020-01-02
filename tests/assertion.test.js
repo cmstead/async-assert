@@ -1,4 +1,4 @@
-const AsyncAssertion = require('../dependencies/AsyncAssertion');
+const AsyncAssert = require('../dependencies/AsyncAssertion');
 const promisePuppeteer = require('promise-puppeteer');
 const { assert } = require('chai');
 
@@ -12,14 +12,13 @@ function delayedReject(thenableFake, result) {
 
 describe("Assertion", function () {
 
-    let assertion;
     let thenableFake;
+    let asyncAction;
 
     beforeEach(function () {
         thenableFake = promisePuppeteer.getThenableFake();
-        const asyncAction = () => thenableFake;
+        asyncAction = () => thenableFake;
 
-        assertion = AsyncAssertion.callAction(asyncAction);
     });
 
     describe("assertResult", function () {
@@ -28,7 +27,8 @@ describe("Assertion", function () {
 
             delayedResolve(thenableFake, actualResult);
 
-            return assertion
+            return AsyncAssert
+                .callAction(asyncAction)
                 .assertResult(result => result.message)
                 .equals('YAY');
         });
@@ -40,7 +40,8 @@ describe("Assertion", function () {
 
             let resolutionState = true;
 
-            return assertion
+            return AsyncAssert
+                .callAction(asyncAction)
 
                 .assertResult(result => result.message)
                 .equals('ANOTHER YAY')
@@ -56,6 +57,8 @@ describe("Assertion", function () {
         });
 
         it("throws an error when assertResult is called more than once", function () {
+            const assertion = AsyncAssert.callAction(asyncAction);
+
             assert.throws(
                 () => assertion.assertResult(() => null).assertResult(),
                 'Functions assertResult and assertError cannot be used together, or called more than once.');
@@ -66,21 +69,23 @@ describe("Assertion", function () {
                 setTimeout(() => callback(null, 'something'), 15);
             }
 
-            const assertion = new AsyncAssertion(callbackStyleAction);
+            return AsyncAssert
+                .callAction(callbackStyleAction)
 
-            return assertion
                 .assertResult(x => x)
                 .equals('something');
         });
     });
 
-    describe("assertError", function(){
+    describe("assertError", function () {
         it("uses a transform to capture error for assertion", function () {
             const actualError = new Error('Something broke');
 
             delayedReject(thenableFake, actualError);
 
-            return assertion
+            return AsyncAssert
+                .callAction(asyncAction)
+
                 .assertError(result => result.message)
                 .equals('Something broke');
         });
