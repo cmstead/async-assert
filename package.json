@@ -1,0 +1,42 @@
+{
+  "name": "async-assert",
+  "version": "1.0.0",
+  "description": "Test asynchronous behaviors in your tests without tearing out your hair",
+  "main": "index.js",
+  "scripts": {
+    "test": "node ./node_modules/nanocommit/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cmstead/async-assert.git"
+  },
+  "keywords": [
+    "async",
+    "tdd",
+    "assertions"
+  ],
+  "author": "Chris Stead",
+  "license": "MPL-2.0",
+  "bugs": {
+    "url": "https://github.com/cmstead/async-assert/issues"
+  },
+  "homepage": "https://github.com/cmstead/async-assert#readme",
+  "nanocommit": {
+    "testCommand": "node ./node_modules/mocha/bin/mocha ./tests/**/*.test.js",
+    "blindCommit": true,
+    "annotations": "nanocommit",
+    "watchFiles": [],
+    "defaultCommandArgs": null,
+    "commitMessage": null,
+    "customAnnotations": null
+  },
+  "devDependencies": {
+    "mocha": "^6.2.2",
+    "nanocommit": "^1.13.0",
+    "promise-puppeteer": "^1.1.0"
+  },
+  "dependencies": {
+    "chai": "^4.2.0",
+    "request": "^2.88.0"
+  }
+}
