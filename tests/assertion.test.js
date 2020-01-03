@@ -59,14 +59,6 @@ describe("Assertion", function () {
                 });
         });
 
-        it("throws an error when assertResult is called more than once", function () {
-            const assertion = AsyncAssert.callAction(asyncAction);
-
-            assert.throws(
-                () => assertion.assertResult(() => null).assertResult(),
-                'set a transform more than once');
-        });
-
         it("properly resolves callback-style async actions", function () {
             function callbackStyleAction(callback) {
                 setTimeout(() => callback(null, 'something'), 15);

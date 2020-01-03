@@ -2,29 +2,10 @@ const { assert } = require('chai');
 const AsyncActionResolver = require('./AsyncActionResolver');
 const TransformResolver = require('./TransformResolver');
 
-function AsyncAssertion(asyncAction) {
-    this.asyncActionResolver = new AsyncActionResolver(asyncAction);
-    this.transformResolver = new TransformResolver();
+function Assertable(transformResolver, asyncActionResolver) {
+    this.transformResolver = transformResolver;
+    this.asyncActionResolver = asyncActionResolver;
 }
-
-AsyncAssertion.callAction = function (asyncAction) {
-    return new AsyncAssertion(asyncAction);
-}
-
-AsyncAssertion.prototype = {
-    assertResult: function (resultTransform) {
-        this.transformResolver.setTransform(resultTransform);
-
-        return this;
-    },
-
-    assertError: function (resultTransform) {
-        this.transformResolver.setTransform(resultTransform);
-        this.transformResolver.setErrorIsExpected();
-
-        return this;
-    }
-};
 
 function assertionBuilder(assertionKey) {
     return function (...args) {
@@ -44,7 +25,31 @@ function assertionBuilder(assertionKey) {
 Object
     .keys(assert)
     .forEach(function(key) {
-        AsyncAssertion.prototype[key] = assertionBuilder(key);
+        Assertable.prototype[key] = assertionBuilder(key);
     });
+
+function AsyncAssertion(asyncAction) {
+    this.asyncActionResolver = new AsyncActionResolver(asyncAction);
+    this.transformResolver = new TransformResolver();
+}
+
+AsyncAssertion.callAction = function (asyncAction) {
+    return new AsyncAssertion(asyncAction);
+}
+
+AsyncAssertion.prototype = {
+    assertResult: function (resultTransform) {
+        const transformResolver = new TransformResolver(resultTransform);
+        
+        return new Assertable(transformResolver, this.asyncActionResolver);
+    },
+    
+    assertError: function (resultTransform) {
+        const transformResolver = new TransformResolver(resultTransform);
+        transformResolver.setErrorIsExpected();
+
+        return new Assertable(transformResolver, this.asyncActionResolver);
+    }
+};
 
 module.exports = AsyncAssertion;
