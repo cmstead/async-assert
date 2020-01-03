@@ -108,14 +108,16 @@ AsyncAssert returns a promise from the assertion call (equal, isTrue, isArray, e
 
 **AsyncAssert core behaviors:**
 
-- new AsyncAssert: function => assertion
-- AsyncAssert.callAction: function => assertion
+- `new AsyncAssert()`: asyncAction: function => assertion
+- `AsyncAssert.callAction()`: asyncAction: function => assertion
 
 **AsyncAssert assertion behaviors:**
 
-- assertion.assertResult: function => assertable
-- assertion.assertError: function => assertable
+- `assertion.assertResult()`: function => assertable
+- `assertion.assertError()`: function => assertable
 
 **AsyncAssert assertable behaviors:**
+
+`assertable.assertionName()`
 
 All assertable methods match one-to-one against the [Chai assert API](https://www.chaijs.com/api/assert/).
