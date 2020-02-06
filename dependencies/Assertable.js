@@ -5,19 +5,42 @@ function Assertable(transformResolver, asyncActionResolver) {
     this.asyncActionResolver = asyncActionResolver;
 }
 
+Assertable.prototype = {
+    buildHandlers: function (resolve, reject, assertion) {
+        if (this.transformResolver.expectResponse) {
+            const handleResponse = this.transformResolver.buildResponseHandler(resolve, reject, assertion);
+
+            return {
+                handleResolution: handleResponse,
+                handleError: handleResponse
+            };
+        } else {
+            return {
+                handleResolution: this.transformResolver.buildResolutionHandler(resolve, reject, assertion),
+                handleError: this.transformResolver.buildRejectionHandler(resolve, reject, assertion)
+            };
+        }
+    }
+};
+
+
+
 function assertionBuilder(assertionKey) {
     return function (...args) {
         return new Promise((resolve, reject) => {
             const assertion = (result) => assert[assertionKey](...[result].concat(args));
-            const handleResolution = this.transformResolver.buildResolutionHandler(resolve, reject, assertion);
-            const handleError = this.transformResolver.buildRejectionHandler(resolve, reject, assertion)
+
+            const {
+                handleResolution,
+                handleError
+            } = this.buildHandlers(resolve, reject, assertion);
 
             this.asyncActionResolver
                 .resolve()
                 .then(handleResolution)
                 .catch(handleError);
         });
-    }
+    };
 }
 
 Object

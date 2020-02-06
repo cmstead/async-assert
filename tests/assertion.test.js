@@ -84,7 +84,34 @@ describe("Assertion", function () {
                 .assertError(result => result.message)
                 .equal('Something broke');
         });
+    });
+
+    describe("assertResponse", function () {
+        it("uses a transform to capture response on success", function () {
+            const actualValue = { message: 'Yay!' };
+
+            delayedResolve(thenableFake, actualValue);
+
+            return AsyncAssert
+                .callAction(asyncAction)
+
+                .assertResponse(result => result.message)
+                .equal('Yay!');
+        });
+
+        it("uses a transform to capture response on error", function () {
+            const actualError = new Error('Oh noes!!');
+
+            delayedResolve(thenableFake, actualError);
+
+            return AsyncAssert
+                .callAction(asyncAction)
+
+                .assertResponse(result => result.message)
+                .equal('Oh noes!!');
+        });
 
 
     });
+
 });

@@ -1,22 +1,37 @@
 function TransformResolver(transform) {
     this.transform = transform;
     this.expectError = false;
+    this.expectResponse = false;
 }
 
 TransformResolver.prototype = {
     throwOnTransformExists: function () {
-        if(typeof this.transform === 'function') {
+        if (typeof this.transform === 'function') {
             throw new Error('Cannot set a transform more than once');
         }
     },
-    
-    setErrorIsExpected: function() {
+
+    errorIsExpected: function () {
         this.expectError = true;
+    },
+
+    responseIsExpected: function () {
+        this.expectResponse = true;
     },
 
     setTransform: function (transform) {
         this.throwOnTransformExists();
         this.transform = transform;
+    },
+
+    buildResponseHandler: function (resolve, _, assertion) {
+        return (...results) => {
+            const actualResult = this.transform(...results);
+
+            assertion(actualResult);
+
+            resolve(true);
+        }
     },
 
     buildResolutionHandler: function (resolve, reject, assertion) {
@@ -28,7 +43,7 @@ TransformResolver.prototype = {
 
                 resolve(true);
             } else {
-                reject(new Error('[RequestAssert] Expected an error, but got a success result.'));
+                reject(new Error('[AsyncAssert] Expected an error, but got a success result.'));
             }
         }
     },
@@ -46,7 +61,7 @@ TransformResolver.prototype = {
                     reject(e);
                 }
             } else {
-                reject(new Error('[RequestAssert] Expected a success result, but got an error.'));
+                reject(new Error('[AsyncAssert] Expected a success result, but got an error.'));
             }
         }
     }

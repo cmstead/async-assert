@@ -11,6 +11,13 @@ AsyncAssertion.callAction = function (asyncAction) {
 }
 
 AsyncAssertion.prototype = {
+    assertResponse: function (responseTransform) {
+        const transformResolver = new TransformResolver(responseTransform);
+        transformResolver.responseIsExpected();
+
+        return new Assertable(transformResolver, this.asyncActionResolver);
+    },
+    
     assertResult: function (resultTransform) {
         const transformResolver = new TransformResolver(resultTransform);
         
@@ -19,7 +26,7 @@ AsyncAssertion.prototype = {
     
     assertError: function (resultTransform) {
         const transformResolver = new TransformResolver(resultTransform);
-        transformResolver.setErrorIsExpected();
+        transformResolver.errorIsExpected();
 
         return new Assertable(transformResolver, this.asyncActionResolver);
     }
